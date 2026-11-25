@@ -26,6 +26,9 @@ rules of this project. Read the project's rules first (`CLAUDE.md`, rule
 files, ADRs). A workaround or an owner's decision written there stands: it is
 not a deviation.
 
+A task with several mechanisms has several decisions: take each one
+through steps 2 and 3.
+
 ## 2. Read the primary source
 
 Sources, strongest first:
@@ -39,12 +42,14 @@ Sources, strongest first:
 
 Open the page, not the search snippet. A page too large to read whole: open
 the section by its anchor, or search within the page. Do not settle for the
-first fragment you got. Answer two questions, both required:
+first fragment you got. Answer three questions, all required:
 
 - What does the platform recommend here?
 - What bites people? Look at lifecycle, interruption, cancellation, failure
-  of a dependency, a crash between two steps, another writer of the same
-  data, load, background.
+  of a dependency, load, background.
+- What is next to it? Where the data you take in ends up, and who reads it
+  there. Who else gets the same event: a second instance, another consumer,
+  a retry. What two calls at once do, and a crash between two steps.
 
 A stack skill that is installed can do the lookup. Confirm what it says
 against the source it cites. A claim whose source you did not open is marked
