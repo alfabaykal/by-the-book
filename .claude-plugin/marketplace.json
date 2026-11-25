@@ -1,0 +1,14 @@
+{
+  "name": "by-the-book",
+  "owner": {
+    "name": "Dmitrii Boiko",
+    "url": "https://github.com/alfabaykal"
+  },
+  "plugins": [
+    {
+      "name": "by-the-book",
+      "source": "./",
+      "description": "Mechanisms by the platform's guidance: choosing, reviewing, testing, and a hook that keeps each project rule next to its check."
+    }
+  ]
+}

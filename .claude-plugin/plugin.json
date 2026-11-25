@@ -1,0 +1,12 @@
+{
+  "name": "by-the-book",
+  "description": "Makes an agent take each mechanism, test code included, from the platform's own guidance, and warns when a commit adds a project rule without a check in the gate.",
+  "author": {
+    "name": "Dmitrii Boiko",
+    "url": "https://github.com/alfabaykal"
+  },
+  "homepage": "https://github.com/alfabaykal/by-the-book",
+  "repository": "https://github.com/alfabaykal/by-the-book",
+  "license": "MIT",
+  "keywords": ["best-practices", "review", "testing", "flaky-tests", "documentation"]
+}
