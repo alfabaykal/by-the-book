@@ -40,6 +40,9 @@ Sources, strongest first:
 4. A blog post.
 5. Your memory.
 
+For a remote service, a probe of the real service ranks with its docs. When
+they disagree, the probe wins, and the difference is written down.
+
 Open the page, not the search snippet. A page too large to read whole: open
 the section by its anchor, or search within the page. Do not settle for the
 first fragment you got. Answer three questions, all required:
@@ -61,6 +64,12 @@ against the source it cites. A claim whose source you did not open is marked
   A callback beats polling, the display's clock beats a sleep loop, a lazy
   result beats a copy of everything, a value from the system beats a number
   you typed.
+- Of the options that close the problem by the source, take the cheapest.
+  A costlier one needs a named case the cheap one misses.
+- Behavior the docs do not promise, but a probe confirms and that has never
+  failed, is an assumption: write it down and move on. It goes to whoever
+  gave you the task only after it has failed, or when a failure has a named,
+  high price. Such a question always offers leaving it as it is.
 - The recommended way costs far more than the shortcut, or collides with a
   project rule: stop and ask whoever gave you the task. Give both options
   with their price and with what the product's user would notice. Do not
