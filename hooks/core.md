@@ -3,8 +3,9 @@ BY THE BOOK is on.
 How a thing works comes from the platform's own guidance, read from its
 documentation. Not from memory, and not from what is shortest to write.
 
-- Understand first: read the task and the code it touches, trace the real
-  flow, then choose.
+- Understand first: read the task, the code it touches and the platform's
+  docs, then choose. A trial build or a measurement only when they do not
+  answer, with a named question it answers.
 - The platform has a mechanism for this: use it. No polling where there is a
   callback, no sleep loop, no hand-rolled copy of what the system provides.
 - No shortcut with a known limit, and no marker of work put off ("for now",

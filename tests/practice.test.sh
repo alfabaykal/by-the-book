@@ -94,6 +94,62 @@ event skill s10 reviewer "$(skill is-it-by-the-book)" >/dev/null
 expect_silence "a reviewer subagent's check covers the session's changes" \
   "$(event stop s10 "" "$(stop Stop)")"
 
+# Data and images decide nothing either
+for file in /repo/parity/screens.csv /repo/Localizable.xcstrings /repo/ru.lproj/Main.strings /repo/__snapshots__/Home.png; do
+  expect_silence "no reminder for $file" \
+    "$(event pre-edit s13 "" "$(edit "$file")")"
+  event post-edit s13 "" "$(edit "$file")" >/dev/null
+done
+expect_silence "data and images only: free to stop" \
+  "$(event stop s13 "" "$(stop Stop)")"
+
+# Resolving a merge or a cherry-pick replays someone else's commit
+# conflicted <format> <git command>: a repo stopped on a conflict, whose
+# path it prints. The reftable format keeps CHERRY_PICK_HEAD out of the files.
+repos=$(mktemp -d)
+trap 'rm -rf "$CLAUDE_PLUGIN_DATA" "$repos"' EXIT
+conflicted() {
+  format=$1 operation=$2
+  dir=$(mktemp -d "$repos/repo.XXXXXX")
+  (
+    cd "$dir" && git init -q --ref-format="$format" &&
+    git config user.email t@t && git config user.name t && git config commit.gpgsign false &&
+    git commit -q --allow-empty -m base && git checkout -q -b other &&
+    echo other > App.swift && git add . && git commit -q -m other &&
+    git checkout -q - && echo main > App.swift && git add . && git commit -q -m main &&
+    { eval "$operation" >/dev/null 2>&1 || true; }
+  )
+  echo "$dir"
+}
+n=0
+for format in files reftable; do
+  for operation in "git cherry-pick other" "git merge other" "git rebase other" \
+    "echo third > App.swift && git commit -q -am third && git revert --no-edit HEAD~1"; do
+    n=$((n + 1))
+    dir=$(conflicted "$format" "$operation")
+    event post-edit "s14-$n" "" "$(edit "$dir/App.swift")" >/dev/null
+    expect_silence "resolving \"${operation##* && }\" ($format): free to stop" \
+      "$(event stop "s14-$n" "" "$(stop Stop)")"
+  done
+done
+dir=$(conflicted files "git rebase other")
+mkdir "$dir/Sources"
+event post-edit s16 "" "$(edit "$dir/Sources/New.swift")" >/dev/null
+expect_silence "a file in a subdirectory during a rebase: free to stop" \
+  "$(event stop s16 "" "$(stop Stop)")"
+git -C "$dir" rebase --abort
+base=$(git -C "$dir" branch --show-current)
+git -C "$dir" worktree add -q "$repos/linked" other
+(cd "$repos/linked" && git rebase "$base" >/dev/null 2>&1)
+event post-edit s17 "" "$(edit "$repos/linked/App.swift")" >/dev/null
+expect_silence "a rebase in a linked worktree: free to stop" \
+  "$(event stop s17 "" "$(stop Stop)")"
+
+dir=$(conflicted files true)
+event post-edit s15 "" "$(edit "$dir/App.swift")" >/dev/null
+expect "the same repo with no operation under way: blocked" \
+  "$(event stop s15 "" "$(stop Stop)")" "$blocks"
+
 # Session end cleans up
 event post-edit s11 "" "$(edit /repo/App.swift)" >/dev/null
 event end s11 "" '{"hook_event_name": "SessionEnd"}' >/dev/null

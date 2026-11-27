@@ -34,14 +34,37 @@ agent=$(safe "$(field .agent_id)")
 data=${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/by-the-book}
 state="$data/sessions/$session"
 
-# A change to prose decides nothing about how the product works.
+# A change to prose, data, translations or images decides nothing about how
+# the product works. Neither does resolving a merge, cherry-pick, revert or
+# rebase: it replays a commit that was written and checked before. Git is
+# asked rather than its files read, because the reftable format keeps
+# CHERRY_PICK_HEAD and REVERT_HEAD out of the git directory.
 is_code() {
   path=$(field '.tool_input.file_path // .tool_input.notebook_path')
   lower=$(printf '%s' "$path" | tr '[:upper:]' '[:lower:]')
   case $lower in
     *.md | *.mdx | *.markdown | *.txt | *.rst | *.adoc) return 1 ;;
+    *.csv | *.tsv | *.strings | *.stringsdict | *.xcstrings | *.po) return 1 ;;
+    *.png | *.jpg | *.jpeg | *.gif | *.webp | *.heic) return 1 ;;
   esac
-  return 0
+  ! replaying "$(dirname "$path")"
+}
+
+replaying() {
+  [ -d "$1" ] || return 1
+  git -C "$1" rev-parse --git-dir >/dev/null 2>&1 || return 1
+  for ref in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD; do
+    git -C "$1" rev-parse -q --verify "$ref" >/dev/null 2>&1 && return 0
+  done
+  # --git-path answers relative to the directory it runs in, or absolute in
+  # a linked worktree.
+  (
+    cd "$1" || exit 1
+    for dir in rebase-merge rebase-apply; do
+      [ -d "$(git rev-parse --git-path "$dir")" ] && exit 0
+    done
+    exit 1
+  )
 }
 
 case $mode in

@@ -17,9 +17,11 @@ decides how the asked thing works, not how much gets built.
 
 ## 1. Understand, then name the decision
 
-Read the task and the code it touches. Trace the real flow end to end. For a
-bug, find every caller of what you are about to change: the fix goes where
-they all pass, not where the symptom showed.
+Read the task and the code it touches. Trace the real flow end to end in the
+code. For a bug, find every caller of what you are about to change: the fix
+goes where they all pass, not where the symptom showed. A trial build or a
+measurement comes only when the code and the docs do not answer, and with a
+named question it answers.
 
 Then one line: what has to work, on which platform and version, under which
 rules of this project. Read the project's rules first (`CLAUDE.md`, rule
