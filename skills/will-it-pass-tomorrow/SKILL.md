@@ -1,6 +1,6 @@
 ---
 name: will-it-pass-tomorrow
-description: Use before writing or fixing a test, when a test fails only sometimes, only under load or takes seconds, and when reviewing test code. The test controls the clock, network, disk, timers and system components its code depends on, and waits for a state, never for time.
+description: Use before writing or fixing a test, before re-recording a stored reference (a snapshot, a golden file), when a test fails only sometimes, only in CI, only under load or takes seconds, and when reviewing test code. The test controls the clock, network, disk, timers and system components its code depends on, and waits for a state, never for time.
 ---
 
 # Will it pass tomorrow
@@ -26,6 +26,12 @@ test framework: many ship a clock the test can drive.
 Dates count. A test that writes `2025-03-01` compares it with the real today
 and breaks the day that date passes. Set "now" in the test and derive every
 date from it: now plus three days.
+
+A test that compares with a stored result (a snapshot, a golden file) holds
+every input of that result: device or size, size class, safe area, theme,
+text size, scale, language, time zone. Record the reference where the gate
+runs. A red reference on a screen nobody touched is not re-recorded until
+you name the input that changed.
 
 ## 3. Wait for a state, never for time
 
@@ -53,6 +59,13 @@ When the work produces a rule for tests ("no sleep in tests"), the same
 change adds a check that fails the gate: a lint rule or a script, with one
 fixture that must fail and one that must pass. A rule that only a document
 holds comes back after the next cleanup.
+
+## 5. Red in CI, green here
+
+Read that run's artifacts first: attachments, log, test order, workers.
+Then match the environment: tool and runtime versions, language, time
+zone, device. Then one local run with a named question. A full run to see
+whether it reproduces answers nothing.
 
 ## Signs the test will not pass tomorrow
 

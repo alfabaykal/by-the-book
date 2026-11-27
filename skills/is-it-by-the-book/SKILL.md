@@ -42,7 +42,9 @@ nothing because of it.
 Test code is in scope: how a test waits and what it controls is a
 mechanism. Judge it by `by-the-book:will-it-pass-tomorrow`. A test that
 waits for a product timer on the real clock (a client timeout, a backoff, a
-TTL, a scheduler) waits on time: that is a finding.
+TTL, a scheduler) waits on time: that is a finding. A test's mechanism
+includes the helpers it calls: open the shared helper, not only the test in
+the diff.
 
 A rule added to the project's rule files with no check in its gate is a
 finding.
